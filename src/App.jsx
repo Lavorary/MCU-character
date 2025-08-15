@@ -1,10 +1,10 @@
 import "./index.css"
-import  characterList from '../src/back/CharacterList.jsx';
+import  CharacterList from './front/components/CharacterList.jsx';
 
 export default function App(){
     return(
        <div>
-        <characterList />
+        <CharacterList />
        </div>
     )
 }
