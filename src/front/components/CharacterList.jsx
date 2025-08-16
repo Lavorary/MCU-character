@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { gsap } from "gsap";
 
 const CharacterList = () => {
     const [characters, setCharacters] = useState([]);
@@ -108,9 +109,9 @@ const CharacterList = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {characters.map(character => (
                         <div key={character.id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
-                            <h3 className="text-lg font-semibold">{character.name}</h3>
-                            <p className="text-gray-600">Real Name: {character.realName}</p>
-                            <p className="text-gray-600">Universe: {character.universe}</p>
+                            <h3 className="text-3xl font-bold text-center font-avengers">{character.name}</h3>
+                            <p className="text-gray-600"><b>Real Name:</b> {character.realName}</p>
+                            <p className="text-gray-600"><b>Universe:</b> {character.universe}</p>
                             <div className="mt-3 flex space-x-2">
                                 <button
                                     onClick={() => handleEdit(character)}
