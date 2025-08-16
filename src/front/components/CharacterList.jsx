@@ -11,7 +11,7 @@ const CharacterList = () => {
     const [editingId, setEditingId] = useState(null);
     const [status, setStatus] = useState('');
     const [showAddForm, setShowAddForm] = useState(false);
-
+    const [searchQuery, setSearchQuery] = useState('');
 
     const fetchCharacters = async () => {
         try {
@@ -24,9 +24,33 @@ const CharacterList = () => {
         }
     };
 
+    const searchCharacters = async () => {
+        if (!searchQuery.trim()) {
+            fetchCharacters();
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/characters/search?query=${encodeURIComponent(searchQuery)}`);
+            if (!response.ok) throw new Error('Search failed');
+            const data = await response.json();
+            setCharacters(data);
+        } catch (err) {
+            setStatus('Error searching characters: ' + err.message);
+        }
+    };
+
     useEffect(() => {
         fetchCharacters();
     }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            searchCharacters();
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -61,6 +85,7 @@ const CharacterList = () => {
             setEditingId(null);
             setShowAddForm(false);
             setStatus(editingId ? 'Character updated!' : 'Character added!');
+            setSearchQuery('');
         } catch (err) {
             setStatus('Error: ' + err.message);
         }
@@ -103,8 +128,96 @@ const CharacterList = () => {
     return (
         <div className="w-full h-screen flex flex-col justify-center p-4 animate bg-gray-50">
             <div className="max-w-6xl mx-auto">
-                <h1 className="avengers-title font-avengers text-7xl font-bold text-center my-8 text-red-600">The
-                    Avengers</h1>
+                <h1 className="avengers-title font-avengers text-7xl font-bold text-center my-8 text-red-600">The Avengers</h1>
+
+                {/* Search Bar and add character part*/}
+            <div className='flex items-center justify-center gap-10 mb-5'>
+                <div className=" flex justify-center">
+                    <div className="relative w-full max-w-md">
+                        <input
+                            type="text"
+                            placeholder="Search heroes"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    fetchCharacters();
+                                }}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                </div>
+                <div className="text-center">
+                    <button
+                        onClick={toggleAddForm}
+                        className="px-6 py-3 bg-red-950 text-white rounded-lg shadow hover:bg-red-700 transition"
+                    >
+                        {showAddForm ? 'Cancel' : 'Add a New Character'}
+                    </button>
+                </div>
+            </div>
+                {showAddForm && (
+                    <div className=" w-fit p-5 m-10 rounded-lg shadow-md flex-col justify-center items-center animate-fadeIn">
+                        <h2 className="text-xl font-semibold mb-4">
+                            {editingId ? 'Edit Character' : 'Add New Character'}
+                        </h2>
+                        <form onSubmit={handleSubmit}
+                              className="space-y-4 p-5 flex-col justify-center items-center">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Hero Name</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-[100%] py-2 border rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Identity</label>
+                                <input
+                                    type="text"
+                                    name="realName"
+                                    value={formData.realName}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-[100%] py-2 border rounded-md shadow-sm"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Universe</label>
+                                <input
+                                    type="text"
+                                    name="universe"
+                                    value={formData.universe}
+                                    onChange={handleInputChange}
+                                    className="mt-1 block w-[100%] px-3 py-2 border rounded-md shadow-sm"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-fit px-4 py-2 bg-red-600 flex justify-center items-center text-white rounded-md hover:bg-red-700"
+                            >
+                                {editingId ? 'Update Character' : 'Add Character'}
+                            </button>
+                        </form>
+                        {status && (
+                            <p className={`mt-3 text-sm ${
+                                status.includes('Error') ? 'text-red-600' : 'text-green-600'
+                            }`}>
+                                {status}
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 {/* Characters Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
@@ -133,70 +246,9 @@ const CharacterList = () => {
                 </div>
             </div>
 
-            <div className="text-center mt-15">
-                <button
-                    onClick={toggleAddForm}
-                    className="px-6 py-3 bg-red-950 text-white rounded-lg shadow hover:bg-red-700 transition"
-                >
-                    {showAddForm ? 'Cancel' : 'Add a New Character'}
-                </button>
-            </div>
 
-            {showAddForm && (
-                <div className="bg-red-500 w-fit p-6 rounded-lg shadow-md mt-8 flex-col justify-center content-center animate-fadeIn">
-                    <h2 className="text-xl font-semibold mb-4">
-                        {editingId ? 'Edit Character' : 'Add New Character'}
-                    </h2>
-                    <form onSubmit={handleSubmit}
-                          className="space-y-4 p-5 flex-col justify-center items-center">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Hero Name</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                className="mt-1 block w-[100%] py-2 border rounded-md shadow-sm"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Real Name</label>
-                            <input
-                                type="text"
-                                name="realName"
-                                value={formData.realName}
-                                onChange={handleInputChange}
-                                className="mt-1 block w-[100%] py-2 border rounded-md shadow-sm"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Universe</label>
-                            <input
-                                type="text"
-                                name="universe"
-                                value={formData.universe}
-                                onChange={handleInputChange}
-                                className="mt-1 block w-[100%] px-3 py-2 border rounded-md shadow-sm"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="w-fit px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                        >
-                            {editingId ? 'Update Character' : 'Add Character'}
-                        </button>
-                    </form>
-                    {status && (
-                        <p className={`mt-3 text-sm ${
-                            status.includes('Error') ? 'text-red-600' : 'text-green-600'
-                        }`}>
-                            {status}
-                        </p>
-                    )}
-                </div>
-            )}
+
+
         </div>
     );
 };
