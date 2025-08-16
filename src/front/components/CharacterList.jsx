@@ -101,27 +101,29 @@ const CharacterList = () => {
     };
 
     return (
-        <div className="w-full min-h-screen p-4 bg-gray-50">
+        <div className="w-full h-screen flex flex-col justify-center p-4 animate bg-gray-50">
             <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold text-center my-8 text-red-600">The Avengers</h1>
+                <h1 className="avengers-title font-avengers text-7xl font-bold text-center my-8 text-red-600">The
+                    Avengers</h1>
 
                 {/* Characters Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
                     {characters.map(character => (
-                        <div key={character.id} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
+                        <div key={character.id}
+                             className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
                             <h3 className="text-3xl font-bold text-center font-avengers">{character.name}</h3>
                             <p className="text-gray-600"><b>Real Name:</b> {character.realName}</p>
                             <p className="text-gray-600"><b>Universe:</b> {character.universe}</p>
-                            <div className="mt-3 flex space-x-2">
+                            <div className="mt-3 flex justify-center items-center space-x-2">
                                 <button
                                     onClick={() => handleEdit(character)}
-                                    className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                                    className="px-3 py-1 w-fit border-2 rounded hover:bg-blue-600 hover:text-white transiton"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     onClick={() => handleDelete(character.id)}
-                                    className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                                    className="px-3 py-1 bg-red-500 text-white text-sm w-fit rounded hover:bg-red-600"
                                 >
                                     Delete
                                 </button>
@@ -141,11 +143,12 @@ const CharacterList = () => {
             </div>
 
             {showAddForm && (
-                <div className="bg-white p-6 rounded-lg shadow-md mb-8 animate-fadeIn">
+                <div className="bg-red-500 w-fit p-6 rounded-lg shadow-md mt-8 flex-col justify-center content-center animate-fadeIn">
                     <h2 className="text-xl font-semibold mb-4">
                         {editingId ? 'Edit Character' : 'Add New Character'}
                     </h2>
-                    <form onSubmit={handleSubmit} className="space-y-4  p-5 h-full flex-col justify-center items-center">
+                    <form onSubmit={handleSubmit}
+                          className="space-y-4 p-5 flex-col justify-center items-center">
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Hero Name</label>
                             <input
@@ -153,7 +156,7 @@ const CharacterList = () => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="mt-1 block w-1/2 px-3 py-2 border rounded-md shadow-sm"
+                                className="mt-1 block w-[100%] py-2 border rounded-md shadow-sm"
                                 required
                             />
                         </div>
@@ -164,7 +167,7 @@ const CharacterList = () => {
                                 name="realName"
                                 value={formData.realName}
                                 onChange={handleInputChange}
-                                className="mt-1 block w-1/2 px-3 py-2 border rounded-md shadow-sm"
+                                className="mt-1 block w-[100%] py-2 border rounded-md shadow-sm"
                                 required
                             />
                         </div>
@@ -175,7 +178,7 @@ const CharacterList = () => {
                                 name="universe"
                                 value={formData.universe}
                                 onChange={handleInputChange}
-                                className="mt-1 block w-1/2 px-3 py-2 border rounded-md shadow-sm"
+                                className="mt-1 block w-[100%] px-3 py-2 border rounded-md shadow-sm"
                             />
                         </div>
                         <button
