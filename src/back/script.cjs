@@ -40,7 +40,6 @@ app.get("/api/characters/search", async (req, res) => {
         res.status(500).json({ error: "Search failed" });
     }
 });
-
 app.post("/api/characters", async (req, res) => {
     try {
         const data = await readCharacters();
@@ -82,4 +81,4 @@ app.delete("/api/characters/:id", async (req, res) => {
     }
 });
 
-app.listen(8080, () => console.log("API running on port 8080"));
+app.listen(5000, () => console.log("API running on port 5000"));
